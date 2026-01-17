@@ -163,11 +163,9 @@ export function CorrectionEditor({ initialData, onSave, onCancel, imagePreview, 
                 {/* 左侧：编辑区 */}
                 <div className="space-y-6">
                     {imagePreview && (
-                        <Card>
-                            <CardContent className="p-4">
-                                <img src={imagePreview} alt="Original" className="w-full rounded-md" />
-                            </CardContent>
-                        </Card>
+                        <div className="glass-card rounded-2xl overflow-hidden border-primary/10 shadow-xl">
+                            <img src={imagePreview} alt="Original" className="w-full h-auto object-contain" />
+                        </div>
                     )}
 
                     <div className="space-y-2">
@@ -275,27 +273,33 @@ export function CorrectionEditor({ initialData, onSave, onCancel, imagePreview, 
 
                 {/* 右侧：预览区 */}
                 <div className="space-y-6">
-                    <Card>
+                    <Card className="glass-card border-none shadow-xl">
                         <CardHeader>
-                            <CardTitle>{t.editor.preview?.question || "Question Preview"}</CardTitle>
+                            <CardTitle className="text-lg font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+                                {t.editor.preview?.question || "Question Preview"}
+                            </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <MarkdownRenderer content={data.questionText} />
                         </CardContent>
                     </Card>
 
-                    <Card>
+                    <Card className="glass-card border-none shadow-xl">
                         <CardHeader>
-                            <CardTitle>{t.editor.preview?.answer || "Answer Preview"}</CardTitle>
+                            <CardTitle className="text-lg font-bold bg-gradient-to-r from-blue-500 to-blue-400 bg-clip-text text-transparent">
+                                {t.editor.preview?.answer || "Answer Preview"}
+                            </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <MarkdownRenderer content={data.answerText} />
                         </CardContent>
                     </Card>
 
-                    <Card>
+                    <Card className="glass-card border-none shadow-xl">
                         <CardHeader>
-                            <CardTitle>{t.editor.preview?.analysis || "Analysis Preview"}</CardTitle>
+                            <CardTitle className="text-lg font-bold bg-gradient-to-r from-purple-500 to-purple-400 bg-clip-text text-transparent">
+                                {t.editor.preview?.analysis || "Analysis Preview"}
+                            </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <MarkdownRenderer content={data.analysis} />

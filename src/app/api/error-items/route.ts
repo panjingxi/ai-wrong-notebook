@@ -26,6 +26,9 @@ export async function POST(req: Request) {
             subjectId,
             gradeSemester,
             paperLevel,
+            mode,
+            videoUrl,
+            errorReason,
         } = body;
 
         // 记录请求参数（不记录完整图片数据）
@@ -162,6 +165,9 @@ export async function POST(req: Request) {
                     gradeSemester: finalGradeSemester,
                     paperLevel: paperLevel,
                     masteryLevel: 0,
+                    mode: mode || "ACADEMIC",
+                    videoUrl: videoUrl || null,
+                    errorReason: errorReason || null,
                     tags: {
                         connect: tagConnections,
                     },

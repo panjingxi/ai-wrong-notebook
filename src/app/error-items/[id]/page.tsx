@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, CheckCircle, XCircle, RefreshCw, Trash2, Edit, Save, X } from "lucide-react";
+import { ArrowLeft, CheckCircle, XCircle, RefreshCw, Trash2, Edit, Save, X, Film, AlertTriangle } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -16,7 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { apiClient } from "@/lib/api-client";
 import { UserProfile } from "@/types/api";
 import { inferSubjectFromName } from "@/lib/knowledge-tags";
-import { VideoRecommendations } from "@/components/video-recommendations";
+
 
 interface KnowledgeTag {
     id: string;
@@ -40,7 +40,19 @@ interface ErrorItemDetail {
     } | null;
     gradeSemester?: string | null;
     paperLevel?: string | null;
+    mode?: 'ACADEMIC' | 'HERITAGE';
+    videoUrl?: string | null;
+    errorReason?: string | null;
 }
+
+const cleanSearchQuery = (text: string | null | undefined) => {
+    if (!text) return '';
+    return text
+        .replace(/^(精准关键词组合[：:]|关键词[：:]|Keywords[：:]|Search terms[：:])/i, '')
+        .replace(/[""“”]/g, '')
+        .replace(/[、,;，；]/g, ' ')
+        .trim();
+};
 
 export default function ErrorDetailPage() {
     const params = useParams();
@@ -707,10 +719,113 @@ export default function ErrorDetailPage() {
                             </CardContent>
                         </Card>
 
-                        <VideoRecommendations
-                            tags={tags}
-                            subjectName={item.subject?.name || undefined}
-                        />
+                        {(item.videoUrl && item.videoUrl !== 'null' && item.videoUrl !== 'undefined') && (
+                            <Card className="border-red-500/30 overflow-hidden">
+                                <CardHeader className="bg-red-500/5 pb-3">
+                                    <div className="flex items-center gap-2">
+                                        <Film className="h-5 w-5 text-red-600" />
+                                        <CardTitle className="text-red-700 dark:text-red-400 text-lg">
+                                            {item.mode === 'HERITAGE' ? '历史影像资料' : 'Related Video'}
+                                        </CardTitle>
+                                    </div>
+                                </CardHeader>
+                                <CardContent className="pt-4">
+                                    <div className="space-y-3">
+                                        <p className="text-sm text-muted-foreground">
+                                            {item.mode === 'HERITAGE'
+                                                ? '以下是与该历史事件相关的珍贵影像资料：'
+                                                : 'Video reference for this problem:'}
+                                        </p>
+                                        {item.videoUrl.startsWith('http') ? (
+                                            <a
+                                                href={item.videoUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex items-center gap-3 p-3 rounded-lg bg-card border hover:border-red-500/50 hover:bg-red-500/5 transition-all group"
+                                            >
+                                                <div className="h-10 w-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                                                    <Film className="h-5 w-5 text-red-600" />
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="font-medium truncate text-foreground group-hover:text-red-700 dark:group-hover:text-red-400 transition-colors">
+                                                        {item.videoUrl}
+                                                    </p>
+                                                    <p className="text-xs text-muted-foreground">
+                                                        {t.common?.clickToWatch || 'Click to watch'}
+                                                    </p>
+                                                </div>
+                                            </a>
+                                        ) : (
+                                            <div className="flex flex-col gap-2">
+                                                <div className="p-3 rounded-lg bg-secondary/50 border text-sm text-foreground/80">
+                                                    <div className="flex items-center gap-2 mb-1 text-muted-foreground">
+                                                        <span className="font-semibold">💡 {t.detail?.searchHint || 'Search Suggestions'}:</span>
+                                                    </div>
+                                                    <p className="leading-relaxed">{cleanSearchQuery(item.videoUrl)}</p>
+                                                </div>
+                                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                                    <a
+                                                        href={`https://search.bilibili.com/all?keyword=${encodeURIComponent(cleanSearchQuery(item.videoUrl))}`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="block"
+                                                    >
+                                                        <Button variant="outline" size="sm" className="w-full border-pink-300/50 text-pink-600 hover:bg-pink-50 dark:hover:bg-pink-950/30">
+                                                            <Film className="h-4 w-4 mr-2" />
+                                                            搜索 B站
+                                                        </Button>
+                                                    </a>
+                                                    <a
+                                                        href={`https://www.douyin.com/search/${encodeURIComponent(cleanSearchQuery(item.videoUrl))}`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="block"
+                                                    >
+                                                        <Button variant="outline" size="sm" className="w-full border-zinc-800 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800">
+                                                            <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                                                                <path d="M19.32 6.55c-1.74-.06-3.32-.6-4.71-1.5-.2-.14-.35-.04-.38.18v8.68c0 3.32-2.7 6.02-6.02 6.02-3.32 0-6.02-2.7-6.02-6.02s2.7-6.02 6.02-6.02c.4 0 .79.04 1.17.11.23.04.4.24.4.48v2.54c0 .24-.18.45-.42.49-.36-.06-.73-.09-1.11-.09-1.39 0-2.52 1.13-2.52 2.52s1.13 2.52 2.52 2.52c1.39 0 2.52-1.13 2.52-2.52V2.46c0-.25.19-.46.45-.48 2.55-.18 4.74-1.33 6.32-3.13.18-.2.48-.22.68-.04l2.15 1.93c.2.18.23.49.05.69-.36.42-.77.8-1.2 1.12z" />
+                                                            </svg>
+                                                            搜索 抖音
+                                                        </Button>
+                                                    </a>
+                                                    <a
+                                                        href={`https://www.baidu.com/s?wd=site%3Axuexi.cn%20${encodeURIComponent(cleanSearchQuery(item.videoUrl))}`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="block"
+                                                    >
+                                                        <Button variant="outline" size="sm" className="w-full border-red-500/50 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30">
+                                                            <Film className="h-4 w-4 mr-2" />
+                                                            搜索 学习强国
+                                                        </Button>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        )}
+
+                        {item.errorReason && (
+                            <Card className="border-orange-500/30">
+                                <CardHeader className="bg-orange-500/5 pb-3">
+                                    <div className="flex items-center gap-2">
+                                        <AlertTriangle className="h-5 w-5 text-orange-600" />
+                                        <CardTitle className="text-orange-700 dark:text-orange-400 text-lg">
+                                            {t.detail?.errorReason || 'Common Error Reason'}
+                                        </CardTitle>
+                                    </div>
+                                </CardHeader>
+                                <CardContent className="pt-4">
+                                    <p className="leading-relaxed">
+                                        {item.errorReason}
+                                    </p>
+                                </CardContent>
+                            </Card>
+                        )}
+
+
 
 
                     </div>

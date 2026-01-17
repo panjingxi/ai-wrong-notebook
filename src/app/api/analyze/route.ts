@@ -22,13 +22,17 @@ export async function POST(req: Request) {
 
     try {
         const body = await req.json();
-        let { imageBase64, mimeType, language, subjectId } = body;
+        let { imageBase64, mimeType, language, subjectId, mode } = body;
+
+        // Default mode if not provided
+        if (!mode) mode = 'ACADEMIC';
 
         logger.debug({
             imageLength: imageBase64?.length,
             mimeType,
             language,
-            subjectId
+            subjectId,
+            mode
         }, 'Request received');
 
         if (!imageBase64) {
@@ -96,9 +100,10 @@ export async function POST(req: Request) {
         };
         const subjectChinese = subjectName ? subjectNameMapping[subjectName] : null;
 
-        logger.info({ userGrade, subject: subjectChinese }, 'Calling AI service for image analysis');
+        logger.info({ userGrade, subject: subjectChinese, mode }, 'Calling AI service for image analysis');
         const aiService = getAIService();
-        const analysisResult = await aiService.analyzeImage(imageBase64, mimeType, language, userGrade, subjectChinese);
+        // Allow explicit casting because we added the mode argument to the interface
+        const analysisResult = await aiService.analyzeImage(imageBase64, mimeType, language, userGrade, subjectChinese, mode as 'ACADEMIC' | 'HERITAGE');
 
         logger.debug({
             knowledgePointsCount: analysisResult.knowledgePoints?.length,

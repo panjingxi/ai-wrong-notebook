@@ -5,7 +5,8 @@ import type { ParsedQuestionFromSchema } from './schema';
 export type DifficultyLevel = 'easy' | 'medium' | 'hard' | 'harder';
 
 export interface AIService {
-    analyzeImage(imageBase64: string, mimeType?: string, language?: 'zh' | 'en', grade?: 7 | 8 | 9 | 10 | 11 | 12 | null, subject?: string | null): Promise<ParsedQuestionFromSchema>;
+    analyzeImage(imageBase64: string, mimeType?: string, language?: 'zh' | 'en', grade?: 7 | 8 | 9 | 10 | 11 | 12 | null, subject?: string | null, mode?: 'ACADEMIC' | 'HERITAGE'): Promise<ParsedQuestionFromSchema>;
+    batchAnalyzeImage(imageBase64: string, mimeType?: string, language?: 'zh' | 'en'): Promise<ParsedQuestionFromSchema[]>;
     generateSimilarQuestion(originalQuestion: string, knowledgePoints: string[], language?: 'zh' | 'en', difficulty?: DifficultyLevel): Promise<ParsedQuestionFromSchema>;
     reanswerQuestion(questionText: string, language?: 'zh' | 'en', subject?: string | null, imageBase64?: string): Promise<{ answerText: string; analysis: string; knowledgePoints: string[] }>;
 }

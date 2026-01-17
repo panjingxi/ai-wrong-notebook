@@ -60,6 +60,8 @@ export class GeminiProvider implements AIService {
         const subjectRaw = this.extractTag(text, "subject");
         const knowledgePointsRaw = this.extractTag(text, "knowledge_points");
         const requiresImageRaw = this.extractTag(text, "requires_image");
+        const videoUrl = this.extractTag(text, "video_url") || undefined;
+        const errorReason = this.extractTag(text, "error_reason") || undefined;
 
         // Basic Validation
         if (!questionText || !answerText || !analysis) {
@@ -70,8 +72,12 @@ export class GeminiProvider implements AIService {
         // Process Subject
         let subject: ParsedQuestion['subject'] = '其他';
         const validSubjects = ["数学", "物理", "化学", "生物", "英语", "语文", "历史", "地理", "政治", "其他"];
-        if (subjectRaw && validSubjects.includes(subjectRaw)) {
-            subject = subjectRaw as ParsedQuestion['subject'];
+        if (subjectRaw) {
+            if (validSubjects.includes(subjectRaw)) {
+                subject = subjectRaw as ParsedQuestion['subject'];
+            } else if (subjectRaw === '人文') {
+                subject = '历史';
+            }
         }
 
         // Process Knowledge Points
@@ -90,7 +96,9 @@ export class GeminiProvider implements AIService {
             analysis,
             subject,
             knowledgePoints,
-            requiresImage
+            requiresImage,
+            videoUrl,
+            errorReason
         };
 
         // Final Schema Validation
@@ -104,7 +112,7 @@ export class GeminiProvider implements AIService {
         }
     }
 
-    async analyzeImage(imageBase64: string, mimeType: string = "image/jpeg", language: 'zh' | 'en' = 'zh', grade?: 7 | 8 | 9 | 10 | 11 | 12 | null, subject?: string | null): Promise<ParsedQuestion> {
+    async analyzeImage(imageBase64: string, mimeType: string = "image/jpeg", language: 'zh' | 'en' = 'zh', grade?: 7 | 8 | 9 | 10 | 11 | 12 | null, subject?: string | null, mode: 'ACADEMIC' | 'HERITAGE' = 'ACADEMIC'): Promise<ParsedQuestion> {
         const config = getAppConfig();
 
         // 从数据库获取各学科标签
@@ -114,7 +122,7 @@ export class GeminiProvider implements AIService {
         const prefetchedBiologyTags = (subject === '生物' || !subject) ? await getTagsFromDB('biology') : [];
         const prefetchedEnglishTags = (subject === '英语' || !subject) ? await getTagsFromDB('english') : [];
 
-        const prompt = generateAnalyzePrompt(language, grade, subject, {
+        const prompt = generateAnalyzePrompt(language, grade, subject, mode, {
             customTemplate: config.prompts?.analyze,
             prefetchedMathTags,
             prefetchedPhysicsTags,
@@ -188,6 +196,68 @@ export class GeminiProvider implements AIService {
                 error: error instanceof Error ? error.message : String(error),
                 stack: error instanceof Error ? error.stack : undefined
             });
+            this.handleError(error);
+            throw error;
+        }
+    }
+
+    async batchAnalyzeImage(imageBase64: string, mimeType: string = "image/jpeg", language: 'zh' | 'en' = 'zh'): Promise<ParsedQuestion[]> {
+        const { generateBatchAnalyzePrompt } = await import('./prompts');
+        const prompt = generateBatchAnalyzePrompt(language);
+
+        logger.box('📚 AI Batch Analysis Request', {
+            provider: 'Gemini',
+            endpoint: `${this.baseUrl}/v1beta/models/${this.modelName}:generateContent`,
+            imageSize: `${imageBase64.length} bytes`,
+            mimeType,
+            model: this.modelName
+        });
+
+        try {
+            const response = await this.ai.models.generateContent({
+                model: this.modelName,
+                contents: [
+                    { text: prompt },
+                    {
+                        inlineData: {
+                            data: imageBase64,
+                            mimeType: mimeType
+                        }
+                    }
+                ]
+            });
+
+            const text = response.text || '';
+            logger.box('🤖 AI Batch Raw Response', text);
+
+            if (!text) throw new Error("Empty response from AI");
+
+            // Manually parse the items XML structure
+            // Regex to find all <item>...</item> blocks (dotall mode)
+            const itemRegex = /<item>([\s\S]*?)<\/item>/g;
+            const items: ParsedQuestion[] = [];
+            let match;
+
+            while ((match = itemRegex.exec(text)) !== null) {
+                const itemContent = match[1];
+                try {
+                    const parsed = this.parseResponse(itemContent); // Reuse single-item parser
+                    items.push(parsed);
+                } catch (e) {
+                    logger.warn({ error: e }, 'Failed to parse a single item in batch, skipping');
+                }
+            }
+
+            if (items.length === 0) {
+                logger.warn('No items parsed from batch response');
+            } else {
+                logger.info({ count: items.length }, 'Successfully parsed batch items');
+            }
+
+            return items;
+
+        } catch (error) {
+            logger.error({ error }, 'Error during batch analysis');
             this.handleError(error);
             throw error;
         }

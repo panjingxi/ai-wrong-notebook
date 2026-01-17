@@ -77,6 +77,8 @@ export class OpenAIProvider implements AIService {
         const subjectRaw = this.extractTag(text, "subject");
         const knowledgePointsRaw = this.extractTag(text, "knowledge_points");
         const requiresImageRaw = this.extractTag(text, "requires_image");
+        const videoUrl = this.extractTag(text, "video_url") || undefined;
+        const errorReason = this.extractTag(text, "error_reason") || undefined;
 
         // Basic Validation
         if (!questionText || !answerText || !analysis) {
@@ -86,9 +88,14 @@ export class OpenAIProvider implements AIService {
 
         // Process Subject
         let subject: ParsedQuestion['subject'] = '其他';
-        const validSubjects = ["数学", "物理", "化学", "生物", "英语", "语文", "历史", "地理", "政治", "其他"];
-        if (subjectRaw && validSubjects.includes(subjectRaw)) {
-            subject = subjectRaw as any;
+        const validSubjects = ["数学", "物理", "化学", "生物", "英语", "语文", "历史", "地理", "政治", "其他"]; // TODO: Add '人文' if needed but map to '其他' or standard subjects
+        if (subjectRaw) {
+            // Mapping '人文' or other vague Heritage subjects to '历史' or '政治' if strict strict, or keep generic
+            if (validSubjects.includes(subjectRaw)) {
+                subject = subjectRaw as any;
+            } else if (subjectRaw === '人文') {
+                subject = '历史';
+            }
         }
 
         // Process Knowledge Points
@@ -108,7 +115,9 @@ export class OpenAIProvider implements AIService {
             analysis,
             subject,
             knowledgePoints,
-            requiresImage
+            requiresImage,
+            videoUrl,
+            errorReason
         };
 
         // Final Schema Validation (just to be safe, though likely compliant by now)
@@ -118,13 +127,11 @@ export class OpenAIProvider implements AIService {
             return validation.data;
         } else {
             logger.warn({ validationError: validation.error.format() }, 'Schema validation warning');
-            // We still return it as we trust our extraction more than the schema at this point (or we can throw)
-            // Let's return the extracted data to be permissive
             return result;
         }
     }
 
-    async analyzeImage(imageBase64: string, mimeType: string = "image/jpeg", language: 'zh' | 'en' = 'zh', grade?: 7 | 8 | 9 | 10 | 11 | 12 | null, subject?: string | null): Promise<ParsedQuestion> {
+    async analyzeImage(imageBase64: string, mimeType: string = "image/jpeg", language: 'zh' | 'en' = 'zh', grade?: 7 | 8 | 9 | 10 | 11 | 12 | null, subject?: string | null, mode: 'ACADEMIC' | 'HERITAGE' = 'ACADEMIC'): Promise<ParsedQuestion> {
         const config = getAppConfig();
 
         // 从数据库获取各学科标签
@@ -135,7 +142,7 @@ export class OpenAIProvider implements AIService {
         const prefetchedBiologyTags = (subject === '生物' || !subject) ? await getTagsFromDB('biology') : [];
         const prefetchedEnglishTags = (subject === '英语' || !subject) ? await getTagsFromDB('english') : [];
 
-        const systemPrompt = generateAnalyzePrompt(language, grade, subject, {
+        const systemPrompt = generateAnalyzePrompt(language, grade, subject, mode, {
             customTemplate: config.prompts?.analyze,
             prefetchedMathTags,
             prefetchedPhysicsTags,

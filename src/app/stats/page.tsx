@@ -3,10 +3,11 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { WrongAnswerStats } from "@/components/wrong-answer-stats";
 import { PracticeStats } from "@/components/practice-stats";
+import { AdvancedStats } from "@/components/advanced-stats";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { BackButton } from "@/components/ui/back-button";
-import { BarChart3, TrendingUp, Activity, House } from "lucide-react";
+import { BarChart3, TrendingUp, Activity, House, BrainCircuit } from "lucide-react";
 import Link from "next/link";
 
 export default function StatsPage() {
@@ -34,8 +35,12 @@ export default function StatsPage() {
                 </div>
             </div>
 
-            <Tabs defaultValue="wrong" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 mb-6">
+            <Tabs defaultValue="analysis" className="w-full">
+                <TabsList className="grid w-full grid-cols-3 mb-6">
+                    <TabsTrigger value="analysis" className="flex items-center gap-2">
+                        <BrainCircuit className="h-4 w-4" />
+                        {t.advancedStats?.tabTitle || "In-Depth Insights"}
+                    </TabsTrigger>
                     <TabsTrigger value="wrong" className="flex items-center gap-2">
                         <Activity className="h-4 w-4" />
                         {t.wrongAnswerStats?.title || "Wrong Answer Stats"}
@@ -46,6 +51,9 @@ export default function StatsPage() {
                     </TabsTrigger>
                 </TabsList>
 
+                <TabsContent value="analysis" className="space-y-4">
+                    <AdvancedStats />
+                </TabsContent>
                 <TabsContent value="wrong" className="space-y-4">
                     <WrongAnswerStats />
                 </TabsContent>

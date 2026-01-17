@@ -22,12 +22,12 @@ export interface PromptOptions {
 }
 
 export const DEFAULT_ANALYZE_TEMPLATE = `【角色与核心任务 (ROLE AND CORE TASK)】
-你是一位世界顶尖的、经验丰富的、专业的跨学科考试分析专家（Interdisciplinary Exam Analysis Expert）。你的核心任务是极致准确地分析用户提供的考试题目图片，全面理解所有文本、图表和隐含约束，并提供一个完整、高度结构化且专业的解决方案。
+你是一位针对天外高二学生的**资深竞赛教练**（Senior Competition Coach）。你的核心任务是深度分析学生提供的错题，不仅给出标准答案，更要像教练一样指出**“解题破局点”**（Breakthrough Point）和**“思维陷阱”**（Thinking Trap），并精准识别**错误类型**。
 
 {{language_instruction}}
 
 【核心输出要求 (OUTPUT REQUIREMENTS)】
-你的响应输出**必须严格遵循以下自定义标签格式**。**严禁**使用 JSON 或 Markdown 代码块。**严禁**对 LaTeX 公式中的反斜杠进行二次转义（如 "\\frac" 是错误的，必须是 "\frac"）。
+你的响应输出**必须严格遵循以下自定义标签格式**。**严禁**使用 JSON 或 Markdown 代码块。**严禁**对 LaTeX 公式中的反斜杠进行二次转义。
 
 请严格按照以下结构输出内容：
 
@@ -40,7 +40,7 @@ export const DEFAULT_ANALYZE_TEMPLATE = `【角色与核心任务 (ROLE AND CORE
 </knowledge_points>
 
 <requires_image>
-判断这道题是否需要依赖图片才能正确解答。如果题目包含几何图形、函数图像、实验装置图、电路图等必须看图才能理解的内容，填写 true；如果只需要文字描述即可理解（如英语题、纯文字数学题），填写 false。
+判断这道题是否需要依赖图片才能正确解答。如果题目包含几何图形、函数图像、实验装置图、电路图等必须看图才能理解的内容，填写 true；否则填写 false。
 </requires_image>
 
 <question_text>
@@ -53,9 +53,16 @@ export const DEFAULT_ANALYZE_TEMPLATE = `【角色与核心任务 (ROLE AND CORE
 
 <analysis>
 在此处填写详细的步骤解析。
-* 必须使用简体中文。
-* **直接使用标准的 LaTeX 符号**（如 $\frac{1}{2}$），**不要**进行 JSON 转义（不要写成 \\frac）。
+**必须包含以下三个固定板块**：
+1. **【解题破局点】**：用一句话点破这道题最关键的切入点或公式。
+2. **【详细步骤】**：逻辑严密的分步推导。
+3. **【思维陷阱】**：指出学生最容易犯错的地方（如：忽略定义域、单位换算错误、模型适用条件等）。
 </analysis>
+
+<error_reason>
+自动判定最可能的错误类型，从以下选项中选择一个（如果无法确定，填写"综合错误"）：
+概念模糊 / 计算失误 / 审题不清 / 模型未见 / 逻辑漏洞 / 知识盲区
+</error_reason>
 
 【知识点标签列表（KNOWLEDGE POINT LIST）】
 {{knowledge_points_list}}
@@ -65,10 +72,50 @@ export const DEFAULT_ANALYZE_TEMPLATE = `【角色与核心任务 (ROLE AND CORE
 - 每题最多 5 个标签。
 
 【!!! 关键格式与内容约束 (CRITICAL RULES) !!!】
-1. **格式严格**：必须严格包含上述 6 个 XML 标签，除此之外不要输出任何其他“开场白”或“结束语”。
-2. **纯文本**：内容作为纯文本处理，**不要转义反斜杠**。
-3. **内容完整**：如果包含子问题，请在 question_text 中完整列出。
-4. **禁止图片**：严禁包含任何图片链接或 markdown 图片语法。
+1. **格式严格**：必须严格包含上述 XML 标签。
+2. **教态严谨**：解析风格要犀利、切中要害，拒绝废话。
+3. **禁止图片**：严禁包含任何图片链接或 markdown 图片语法。
+
+{{provider_hints}}`;
+
+/* BATCH MODE TEMPLATE */
+export const DEFAULT_BATCH_ANALYZE_TEMPLATE = `【角色与核心任务 (ROLE AND CORE TASK)】
+你是一位极其细致的**试卷整理专员**。你的任务是从一张包含多道题目的试卷图片中，**精准识别并拆分出每一道独立的题目**。
+
+{{language_instruction}}
+
+【核心输出要求 (OUTPUT REQUIREMENTS)】
+你的响应输出**必须严格遵循以下 XML 列表格式**。**严禁**使用 JSON 或 Markdown 代码块。
+
+你需要识别图片中的所有题目，并为每一道题生成一个 <item> 块。
+
+请严格按照以下结构输出内容：
+
+<items>
+  <item>
+    <question_index>1</question_index> <!-- 题目序号 -->
+    <question_text>
+      在此处填写第1题的完整文本。Markdown + LaTeX。
+    </question_text>
+    <answer_text>
+      在此处填写第1题的答案（如果有明显答案区域，否则留空）。
+    </answer_text>
+    <analysis>
+       在此处填写AI生成的简要解析（Step-by-step thinking）。
+    </analysis>
+    <knowledge_points>知识点1, 知识点2</knowledge_points>
+    <subject>数学</subject> <!-- 自动推断学科 -->
+  </item>
+  <item>
+    <question_index>2</question_index>
+    ...
+  </item>
+</items>
+
+【!!! 关键格式与内容约束 (CRITICAL RULES) !!!】
+1. **完整性**：不能漏掉任何一道有编号的题目。
+2. **独立性**：如果题目包含子小题（(1), (2)），请将它们合并在同一道 <item> 中，不要拆分过细。
+3. **纯文本**：内容作为纯文本处理，**不要转义反斜杠**。
 
 {{provider_hints}}`;
 
@@ -84,6 +131,12 @@ export const DEFAULT_SIMILAR_TEMPLATE = `你是一位资深的K12教育题目生
 3. **学情分析师**  
    - 预判学生易错点（认知盲区/概念混淆/计算失误/审题偏差）
    - 在变式题目中针对性强化易错点训练
+3. **质量管控**  
+   - 确保每道题：  
+     ✓ 覆盖相同核心知识点  
+     ✓ 保持解题逻辑一致性  
+     ✓ 答案唯一且可验证  
+     ✓ 无知识性错误
 ### 执行流程
 1. **接收任务**  
 	原题: "{{original_question}}"
@@ -94,12 +147,6 @@ export const DEFAULT_SIMILAR_TEMPLATE = `你是一位资深的K12教育题目生
 2. **解构分析**  
    - 提取核心考点与能力要求
    - 分析题目陷阱与解题路径
-3.  **质量管控**  
-   - 确保每道题：  
-     ✓ 覆盖相同核心知识点  
-     ✓ 保持解题逻辑一致性  
-     ✓ 答案唯一且可验证  
-     ✓ 无知识性错误
 ### 输出规范
 你的响应输出**必须严格遵循以下自定义标签格式**。**严禁**使用 JSON 或 Markdown 代码块。**严禁**返回 \`\`\`json ... \`\`\`。
 
@@ -165,18 +212,81 @@ export function getMathTagsForGrade(
   return [];
 }
 
+export const DEFAULT_HERITAGE_TEMPLATE = `【角色与核心任务 (ROLE AND CORE TASK)】
+你是一位博古通今的**历史学家兼时政评论员**（Historian & Political Commentator）。你的核心任务是深度解读用户提供的历史/政治/文化类题目，不仅要解释题目本身，更要挖掘其背后的**“历史档案简述”**（Historical Archive Brief），并关联权威视频资料。
+
+{{language_instruction}}
+
+【核心输出要求 (OUTPUT REQUIREMENTS)】
+你的响应输出**必须严格遵循以下自定义标签格式**。**严禁**使用 JSON 或 Markdown 代码块。
+
+请严格按照以下结构输出内容：
+
+<subject>
+在此处填写学科，通常是："历史", "政治", "地理", "人文".
+</subject>
+
+<knowledge_points>
+在此处填写核心历史事件或考点，例如：中共一大, 改革开放, 长征精神
+</knowledge_points>
+
+<question_text>
+在此处填写题目的完整文本。
+</question_text>
+
+<answer_text>
+在此处填写正确答案。
+</answer_text>
+
+<analysis>
+在此处填写详细的解析。
+**必须包含以下结构**：
+1. **【历史档案简述】**：用一段引人入胜的叙述，还原题目所涉及的历史事件现场或背景（如：“1921年7月，上海法租界望志路...”）。
+2. **【深度解析】**：题目选项的详细剖析，解释为什么选这个，排除其他选项的原因。
+3. **【现实意义】**：简述该知识点的当代价值或对“强国学习”的启示。
+</analysis>
+
+<video_url>
+在此处提供一个相关的、权威的视频链接。**重点扩展**：如果题目涉及重大历史事件，请尝试搜索该事件的经典纪录片或新闻片段，并提取**精准的搜索关键词**。
+格式示例：
+- 精准关键词组合："CCTV 纪录片 长征 第一集"
+- 关键词："开国大典 原始影像"
+请尽量提供有助于直接搜索的关键词。
+</video_url>
+
+<error_reason>
+简述这类题目常见的错误原因（例如：史实细节记忆偏差，因果关系倒置）。
+</error_reason>
+
+【!!! 关键格式与内容约束 (CRITICAL RULES) !!!】
+1. **格式严格**：必须严格包含上述 XML 标签。
+2. **史观正确**：必须坚持唯物史观，引用权威史料。
+3. **生动性**：档案简述部分要有画面感，拒绝枯燥堆砌。
+
+{{provider_hints}}`;
+
 /**
  * Generates the analyze image prompt
  * @param language - Target language for analysis ('zh' or 'en')
- * @param grade - Optional grade level (7-9:初中, 10-12:高中) for cumulative tag filtering
+ * @param grade - Optional grade level
+ * @param subject - Optional subject hint
+ * @param mode - Analyze mode: 'ACADEMIC' (default) or 'HERITAGE'
  * @param options - Optional customizations
  */
 export function generateAnalyzePrompt(
   language: 'zh' | 'en',
   grade?: 7 | 8 | 9 | 10 | 11 | 12 | null,
   subject?: string | null,
+  mode: 'ACADEMIC' | 'HERITAGE' = 'ACADEMIC',
   options?: PromptOptions
 ): string {
+  if (mode === 'HERITAGE') {
+    return replaceVariables(options?.customTemplate || DEFAULT_HERITAGE_TEMPLATE, {
+      language_instruction: language === 'zh' ? "请使用简体中文进行回答。" : "Please answer in English.",
+      provider_hints: options?.providerHints || ''
+    }).trim();
+  }
+
   const langInstruction = language === 'zh'
     ? "IMPORTANT: For the 'analysis' field, use Simplified Chinese. For 'questionText' and 'answerText', YOU MUST USE THE SAME LANGUAGE AS THE ORIGINAL QUESTION. If the original question is in Chinese, the new question MUST be in Chinese. If the original is in English, keep it in English. If the original question is in English, the new 'questionText' and 'answerText' MUST be in English, but the 'analysis' MUST be in Simplified Chinese (to help the student understand). "
     : "Please ensure all text fields are in English.";
@@ -263,6 +373,19 @@ ${englishTagsString}`;
   return replaceVariables(template, {
     language_instruction: langInstruction,
     knowledge_points_list: tagsSection,
+    provider_hints: options?.providerHints || ''
+  }).trim();
+}
+
+/**
+ * Generates the batch analyze prompt
+ */
+export function generateBatchAnalyzePrompt(
+  language: 'zh' | 'en',
+  options?: PromptOptions
+): string {
+  return replaceVariables(options?.customTemplate || DEFAULT_BATCH_ANALYZE_TEMPLATE, {
+    language_instruction: language === 'zh' ? "请使用简体中文进行回答。" : "Please answer in English.",
     provider_hints: options?.providerHints || ''
   }).trim();
 }

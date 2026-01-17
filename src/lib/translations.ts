@@ -1,4 +1,4 @@
-export type Language = 'zh' | 'en';
+﻿export type Language = 'zh' | 'en';
 
 export const translations = {
     en: {
@@ -44,7 +44,8 @@ export const translations = {
                 markMastered: "Marked as mastered",
                 unmarkMastered: "Unmarked",
                 confirmDelete: "Are you sure you want to delete this error item?",
-            }
+            },
+            clickToWatch: "Click to watch",
         },
         app: {
             title: "Smart Error Notebook",
@@ -65,6 +66,14 @@ export const translations = {
             answerPlaceholder: "Enter your answer...",
             notesPlaceholder: "Record your thinking process (optional)...",
             submitAnswer: "Submit Answer",
+            uploadDescription: "Use AI to analyze and organize your wrong questions instantly with premium precision.",
+            startAnalysis: "Start Analysis Now →",
+            notebookDescription: "Access your subject notebooks and review history.",
+            statsDescription: "Track mastery levels and learning progress.",
+            tagsDescription: "Manage knowledge points and topic structure.",
+            comingSoon: "Next Generation Learning Tools Arriving Soon...",
+            addingToNotebook: "Adding to Notebook",
+            backToNotebooks: "Back to Notebooks",
         },
         wrongAnswerStats: {
             title: "Wrong Answer Statistics",
@@ -84,6 +93,10 @@ export const translations = {
             support: "Support JPG, PNG (Max 5MB)",
             analyze: "Analyze with AI",
             // analyzing: "Analyzing...", // Moved to app
+            batchMode: "Batch Mode",
+            batchDesc: "Auto-extract multiple questions",
+            paperNamePlaceholder: "Exam Paper Name (e.g. 2023 Final)",
+            batchTitle: "Upload Exam Paper",
         },
         editor: {
             title: "Review & Correct",
@@ -191,6 +204,8 @@ export const translations = {
             questionInfo: "Question Info",
             close: "Close",
             clickOutside: "Click outside to close",
+            errorReason: "Common Error Reason",
+            searchHint: "Search Suggestions",
         },
         practice: {
             title: "Smart Practice",
@@ -315,6 +330,26 @@ export const translations = {
             weeklyTrend: "Monthly Trend",
             total: "Total",
             correct: "Correct",
+        },
+        advancedStats: {
+            tabTitle: "In-Depth Insights",
+            metaTitle: "Metacognitive Radar",
+            metaDesc: "Identify your most frequent thinking traps.",
+            reviewTitle: "Review Queue",
+            reviewDesc: "Ebbinghaus forgetting curve alerts.",
+            historyTitle: "History Archive Analysis",
+            historyDesc: "Distribution of historical periods.",
+            daysOverdue: "{days} days overdue",
+            caughtUp: "All caught up!",
+            viewAll: "View All Due Items",
+            noData: "No analysis data yet.",
+            coachInsights: "AI Coach Insights",
+            coachInsightsMessage: "Based on your recent \"Vague Concept\" errors, the AI recommends reviewing {topic}.",
+            generatePractice: "Generate Practice Set",
+        },
+        mode: {
+            academic: "Score Mode",
+            heritage: "Heritage Mode",
         },
         settings: {
             title: "Settings",
@@ -574,7 +609,8 @@ export const translations = {
                 markMastered: "已标记为已掌握",
                 unmarkMastered: "已取消掌握标记",
                 confirmDelete: "确定要删除这道错题吗？",
-            }
+            },
+            clickToWatch: "点击观看",
         },
         app: {
             title: "智能错题本",
@@ -595,6 +631,14 @@ export const translations = {
             answerPlaceholder: "输入你的答案...",
             notesPlaceholder: "记录解题思路（可选）...",
             submitAnswer: "提交答案",
+            uploadDescription: "使用 AI 快速分析并整理您的错题，精准高效。",
+            startAnalysis: "立即开始分析 →",
+            notebookDescription: "查看您的科目错题本和复习记录。",
+            statsDescription: "追踪掌握水平和学习进度。",
+            tagsDescription: "管理知识点和主题结构。",
+            comingSoon: "下一代学习工具即将推出...",
+            addingToNotebook: "添加到错题本",
+            backToNotebooks: "返回错题本列表",
         },
         wrongAnswerStats: {
             title: "错题统计",
@@ -614,6 +658,10 @@ export const translations = {
             support: "支持 JPG, PNG (最大 5MB)",
             analyze: "AI 智能解析",
             // analyzing: "解析中...", // Moved to app
+            batchMode: "试卷模式",
+            batchDesc: "AI 自动拆分整张试卷中的多道题目",
+            paperNamePlaceholder: "请输入试卷名称（如：2023期末试卷）",
+            batchTitle: "上传整张试卷",
         },
         editor: {
             title: "校对与保存",
@@ -721,6 +769,8 @@ export const translations = {
             questionInfo: "试题信息",
             close: "✕ 关闭",
             clickOutside: "点击图片外部区域关闭",
+            errorReason: "常见错误原因",
+            searchHint: "搜索建议",
         },
         practice: {
             title: "智能练习",
@@ -845,6 +895,22 @@ export const translations = {
             weeklyTrend: "月度趋势",
             total: "总题数",
             correct: "正确",
+        },
+        advancedStats: {
+            tabTitle: "深度洞察",
+            metaTitle: "元认知雷达",
+            metaDesc: "识别您最常见的思维陷阱。",
+            reviewTitle: "复习队列",
+            reviewDesc: "艾宾浩斯遗忘曲线提醒。",
+            historyTitle: "历史档案分析",
+            historyDesc: "历史时期分布。",
+            daysOverdue: "逾期 {days} 天",
+            caughtUp: "全部完成！",
+            viewAll: "查看所有待复习项",
+            noData: "暂无分析数据。",
+            coachInsights: "AI 教练洞察",
+            coachInsightsMessage: '基于您最近的"概念模糊"错误，AI 建议复习{topic}。',
+            generatePractice: "生成练习集",
         },
         settings: {
             title: "设置",

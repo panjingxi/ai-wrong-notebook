@@ -21,12 +21,16 @@ export function UserWelcome() {
     const userName = mounted && session?.user ? (session.user.name || session.user.email) : 'User';
 
     return (
-        <div className="flex items-center gap-2 bg-card p-4 rounded-lg border shadow-sm animate-in fade-in slide-in-from-top-4 duration-700">
-            <User className="h-5 w-5 text-primary" />
-            <span className="font-medium">
-                {t.common.welcome || 'Welcome back, '}
-                {userName}
-            </span>
+        <div className="flex items-center gap-3 bg-card/40 backdrop-blur-xl p-2 pr-5 rounded-full border border-white/20 dark:border-white/10 shadow-xl animate-in fade-in slide-in-from-top-4 duration-1000">
+            <div className="bg-primary/20 p-2 rounded-full shadow-inner">
+                <User className="h-5 w-5 text-primary" />
+            </div>
+            <div className="flex flex-col">
+                <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">{t.common.welcome || 'Welcome back'}</span>
+                <span className="font-bold text-foreground">
+                    {userName}
+                </span>
+            </div>
         </div>
     );
 }
