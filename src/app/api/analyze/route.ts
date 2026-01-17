@@ -22,10 +22,7 @@ export async function POST(req: Request) {
 
     try {
         const body = await req.json();
-        let { imageBase64, mimeType, language, subjectId, mode } = body;
-
-        // Default mode if not provided
-        if (!mode) mode = 'ACADEMIC';
+        const { imageBase64, mimeType, language, subjectId, mode } = body;
 
         logger.debug({
             imageLength: imageBase64?.length,
@@ -40,17 +37,7 @@ export async function POST(req: Request) {
             return badRequest("Missing image data");
         }
 
-        // Parse Data URL if present
-        if (imageBase64.startsWith('data:')) {
-            const matches = imageBase64.match(/^data:([^;]+);base64,(.+)$/);
-            if (matches) {
-                mimeType = matches[1];
-                imageBase64 = matches[2];
-                logger.debug({ mimeType, base64Length: imageBase64.length }, 'Parsed Data URL');
-            }
-        }
-
-        // 先获取用户年级信息，用于动态生成 AI prompt 中的标签列表
+        // 获取用户年级信息，用于动态生成 AI prompt 中的标签列表
         let userGrade: 7 | 8 | 9 | 10 | 11 | 12 | null = null;
         let subjectName: 'math' | 'physics' | 'chemistry' | 'biology' | 'english' | 'chinese' | 'history' | 'geography' | 'politics' | null = null;
 
@@ -85,7 +72,6 @@ export async function POST(req: Request) {
             }
         }
 
-
         // 将内部科目名称转换为中文科目名称
         const subjectNameMapping: Record<string, string> = {
             'math': '数学',
@@ -100,10 +86,22 @@ export async function POST(req: Request) {
         };
         const subjectChinese = subjectName ? subjectNameMapping[subjectName] : null;
 
-        logger.info({ userGrade, subject: subjectChinese, mode }, 'Calling AI service for image analysis');
+        logger.info({ userGrade, subject: subjectChinese, mode }, 'Using AnalysisEngine for image analysis');
+
+        // 使用 AnalysisEngine 进行分析（业务逻辑已解耦）
         const aiService = getAIService();
-        // Allow explicit casting because we added the mode argument to the interface
-        const analysisResult = await aiService.analyzeImage(imageBase64, mimeType, language, userGrade, subjectChinese, mode as 'ACADEMIC' | 'HERITAGE');
+        const { AnalysisEngine } = await import('@/core/services');
+        const engine = new AnalysisEngine(aiService);
+
+        // Use legacy format for backward compatibility
+        const analysisResult = await engine.analyzeSingleImage({
+            imageBase64,
+            mimeType,
+            language,
+            mode: mode as 'ACADEMIC' | 'HERITAGE',
+            userGrade,
+            subjectName: subjectChinese
+        } as any); // Legacy format will be auto-converted internally
 
         logger.debug({
             knowledgePointsCount: analysisResult.knowledgePoints?.length,

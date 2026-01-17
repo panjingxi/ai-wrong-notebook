@@ -39,9 +39,18 @@ export async function POST(req: Request) {
 
         logger.info({ source, userId: user.id }, 'Starting batch analysis');
 
-        // 1. Call AI Service
+        // 1. 使用 AnalysisEngine 进行批量分析
         const aiService = getAIService();
-        const items = await aiService.batchAnalyzeImage(imageBase64, mimeType, language);
+        const { AnalysisEngine } = await import('@/core/services');
+        const engine = new AnalysisEngine(aiService);
+
+        // Use legacy format for backward compatibility
+        const result = await engine.analyzeBatchImage({
+            imageBase64,
+            mimeType,
+            language
+        } as any); // Legacy format will be auto-converted internally
+        const items = result.items;
 
         logger.info({ count: items.length }, 'AI returned items');
 
