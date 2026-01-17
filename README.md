@@ -55,7 +55,7 @@ docker run -d --name wrong-notebook \
   -p 3000:3000 \
   -v $(pwd)/data:/app/data \
   -v $(pwd)/config:/app/config \
-  ghcr.io/PanJingxi/wrong-notebook
+  ghcr.io/panjingxi/ai-wrong-notebook:latest
 ```
 
 **选项 B：使用 Docker Compose (推荐)**
@@ -64,7 +64,7 @@ docker run -d --name wrong-notebook \
 
 1.  **下载配置文件**：
     ```bash
-    curl -o docker-compose.yml https://raw.githubusercontent.com/PanJingxi/wrong-notebook/refs/heads/main/docker-compose.yml
+    curl -o docker-compose.yml https://raw.githubusercontent.com/panjingxi/ai-wrong-notebook/main/docker-compose.yml
     ```
 2.  **启动服务**：
     ```bash
@@ -81,10 +81,8 @@ docker run -d --name wrong-notebook \
 
 ### 方式二：本地源码运行
 
-#### 1. 克隆仓库
-
-```bash
-git clone https://github.com/PanJingxi/wrong-notebook.git
+# 克隆仓库
+git clone https://github.com/panjingxi/ai-wrong-notebook.git
 cd wrong-notebook
 ```
 

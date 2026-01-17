@@ -86,13 +86,13 @@ async function checkModelsAndVision() {
     if (fs.existsSync(imagePath)) {
         base64Image = fs.readFileSync(imagePath).toString("base64");
     } else {
-        // Fallback to the artifact image if 1.png doesn't exist
-        const artifactImage = "/home/wttwins/.gemini/antigravity/brain/7857ca65-80c3-41fe-a5d2-21f3802af3f8/eng.jpg";
-        if (fs.existsSync(artifactImage)) {
-            base64Image = fs.readFileSync(artifactImage).toString("base64");
-            console.log("Using fallback image: eng.jpg");
+        // Fallback: use a test image if 1.png doesn't exist
+        const altImagePath = path.join(__dirname, "test-image.jpg");
+        if (fs.existsSync(altImagePath)) {
+            base64Image = fs.readFileSync(altImagePath).toString("base64");
+            console.log("Using fallback test image");
         } else {
-            console.error("❌ No test image found (checked scripts/1.png and artifact eng.jpg). Skipping vision test.");
+            console.error("❌ No test image found. Please add a test image (1.png or test-image.jpg) in the scripts folder.");
             return;
         }
     }

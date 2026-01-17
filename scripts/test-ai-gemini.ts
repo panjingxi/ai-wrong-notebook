@@ -39,9 +39,9 @@ async function testGemini() {
     }
 
     try {
-        console.log("Sending analyzeImage request with REAL image...");
+        console.log("Sending analyzeImage request with test image...");
         const fs = await import("fs");
-        const imagePath = "/home/wttwins/.gemini/antigravity/brain/2a8874fc-faf8-4cb4-8137-053b1c27b811/uploaded_image_1764336004527.png";
+        const imagePath = path.join(__dirname, "1.png");
 
         if (fs.existsSync(imagePath)) {
             const imageBuffer = fs.readFileSync(imagePath);
@@ -50,7 +50,7 @@ async function testGemini() {
             const result = await provider.analyzeImage(base64Image, "image/png");
             console.log("analyzeImage Success! Response:", JSON.stringify(result, null, 2));
         } else {
-            console.error("Test image not found at:", imagePath);
+            console.error("Test image not found. Please add 1.png in the scripts folder.");
         }
     } catch (error: any) {
         console.error("analyzeImage Failed!");

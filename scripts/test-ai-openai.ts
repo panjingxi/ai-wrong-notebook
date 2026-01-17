@@ -53,19 +53,17 @@ async function testOpenAI() {
     try {
         console.log("\n--- Test 2: analyzeImage ---");
 
-        // Try to find a real image in the artifacts directory
-        const artifactDir = "/home/wttwins/.gemini/antigravity/brain/7857ca65-80c3-41fe-a5d2-21f3802af3f8";
-        const imageFile = "eng.jpg";
-        const realImagePath = path.join(artifactDir, imageFile);
+        // Try to find a test image in the scripts directory
+        const testImagePath = path.join(__dirname, "1.png");
 
         let base64Image = "";
 
-        if (fs.existsSync(realImagePath)) {
-            console.log(`Found real test image: ${imageFile}`);
-            const imageBuffer = fs.readFileSync(realImagePath);
+        if (fs.existsSync(testImagePath)) {
+            console.log(`Found test image: 1.png`);
+            const imageBuffer = fs.readFileSync(testImagePath);
             base64Image = imageBuffer.toString("base64");
         } else {
-            console.log("No real test image found, using dummy 1x1 pixel image...");
+            console.log("No test image found, using dummy 1x1 pixel image...");
             // Creating a minimal 1x1 white pixel PNG base64
             base64Image = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
         }

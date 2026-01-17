@@ -2,7 +2,7 @@ version: '3'
 
 services:
   wrong-notebook:
-    image: ghcr.io/wttwins/wrong-notebook:latest
+    image: ghcr.io/panjingxi/ai-wrong-notebook:latest
     container_name: wrong-notebook
     restart: always
     ports:
@@ -15,4 +15,3 @@ services:
       # Persist the SQLite database
       - ./data:/app/data
       - ./config:/app/config
-
