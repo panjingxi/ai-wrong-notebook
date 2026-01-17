@@ -31,6 +31,7 @@ interface ReviewItem {
 interface HistoryPeriod {
     name: string;
     count: number;
+    [key: string]: any;
 }
 
 interface AdvancedStatsData {

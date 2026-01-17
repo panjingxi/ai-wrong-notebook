@@ -1,0 +1,22 @@
+﻿src/__tests__/unit/ai-prompts.test.ts(70,68): error TS2345: Argument of type '{ providerHints: string; }' is not assignable to parameter of type '"ACADEMIC" | "HERITAGE" | undefined'.
+src/__tests__/unit/ai-prompts.test.ts(78,68): error TS2345: Argument of type '{ customTemplate: string; }' is not assignable to parameter of type '"ACADEMIC" | "HERITAGE" | undefined'.
+src/__tests__/unit/middleware.test.ts(18,28): error TS2307: Cannot find module '@/middleware' or its corresponding type declarations.
+src/__tests__/unit/middleware.test.ts(181,51): error TS2307: Cannot find module '@/middleware' or its corresponding type declarations.
+src/app/notebooks/[id]/add/page.tsx(279,22): error TS2739: Type '{ onImageSelect: (file: File) => void; isAnalyzing: boolean; }' is missing the following properties from type 'UploadZoneProps': batchMode, onBatchModeChange, paperName, onPaperNameChange
+src/components/advanced-stats.tsx(178,45): error TS2322: Type 'HistoryPeriod[]' is not assignable to type 'ChartDataInput[]'.
+  Type 'HistoryPeriod' is not assignable to type 'ChartDataInput'.
+    Index signature for type 'string' is missing in type 'HistoryPeriod'.
+src/contexts/LanguageContext.tsx(36,35): error TS2322: Type '{ language: Language; setLanguage: (lang: Language) => void; t: { common: { loading: string; error: string; success: string; save: string; cancel: string; confirm: string; back: string; ... 11 more ...; clickToWatch: string; }; ... 20 more ...; broadcast: { ...; }; } | { ...; }; }' is not assignable to type 'LanguageContextType'.
+  Types of property 't' are incompatible.
+    Type '{ common: { loading: string; error: string; success: string; save: string; cancel: string; confirm: string; back: string; delete: string; default: string; welcome: string; pleaseWait: string; notSet: string; ... 6 more ...; clickToWatch: string; }; ... 20 more ...; broadcast: { ...; }; } | { ...; }' is not assignable to type '{ common: { loading: string; error: string; success: string; save: string; cancel: string; confirm: string; back: string; delete: string; default: string; welcome: string; pleaseWait: string; notSet: string; ... 6 more ...; clickToWatch: string; }; ... 20 more ...; broadcast: { ...; }; }'.
+      Property 'mode' is missing in type '{ common: { loading: string; error: string; success: string; save: string; cancel: string; confirm: string; back: string; delete: string; default: string; welcome: string; pleaseWait: string; notSet: string; ... 6 more ...; clickToWatch: string; }; ... 19 more ...; broadcast: { ...; }; }' but required in type '{ common: { loading: string; error: string; success: string; save: string; cancel: string; confirm: string; back: string; delete: string; default: string; welcome: string; pleaseWait: string; notSet: string; ... 6 more ...; clickToWatch: string; }; ... 20 more ...; broadcast: { ...; }; }'.
+src/lib/ai/azure-provider.ts(21,14): error TS2420: Class 'AzureOpenAIProvider' incorrectly implements interface 'AIService'.
+  Property 'batchAnalyzeImage' is missing in type 'AzureOpenAIProvider' but required in type 'AIService'.
+src/lib/ai/azure-provider.ts(147,78): error TS2345: Argument of type '{ customTemplate: string | undefined; prefetchedMathTags: string[]; prefetchedPhysicsTags: string[]; prefetchedChemistryTags: string[]; prefetchedBiologyTags: string[]; prefetchedEnglishTags: string[]; }' is not assignable to parameter of type '"ACADEMIC" | "HERITAGE" | undefined'.
+src/lib/ai/index.ts(21,9): error TS2741: Property 'batchAnalyzeImage' is missing in type 'OpenAIProvider' but required in type 'AIService'.
+src/lib/ai/index.ts(24,9): error TS2741: Property 'batchAnalyzeImage' is missing in type 'AzureOpenAIProvider' but required in type 'AIService'.
+src/lib/ai/index.ts(28,9): error TS2741: Property 'batchAnalyzeImage' is missing in type 'OpenAIProvider' but required in type 'AIService'.
+src/lib/ai/index.ts(36,9): error TS2741: Property 'batchAnalyzeImage' is missing in type 'OpenAIProvider' but required in type 'AIService'.
+src/lib/ai/index.ts(44,9): error TS2741: Property 'batchAnalyzeImage' is missing in type 'OpenAIProvider' but required in type 'AIService'.
+src/lib/ai/openai-provider.ts(12,14): error TS2420: Class 'OpenAIProvider' incorrectly implements interface 'AIService'.
+  Property 'batchAnalyzeImage' is missing in type 'OpenAIProvider' but required in type 'AIService'.

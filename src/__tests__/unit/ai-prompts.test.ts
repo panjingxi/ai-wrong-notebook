@@ -67,7 +67,7 @@ describe('AI Prompts', () => {
         });
 
         it('应该支持自定义选项 (providerHints)', () => {
-            const prompt = generateAnalyzePrompt('zh', null, null, {
+            const prompt = generateAnalyzePrompt('zh', null, null, 'ACADEMIC', {
                 providerHints: '请特别注意 LaTeX 格式',
             });
             expect(prompt).toContain('请特别注意 LaTeX 格式');
@@ -75,7 +75,7 @@ describe('AI Prompts', () => {
 
         it('应该支持自定义模板', () => {
             const customTemplate = '自定义模板 {{language_instruction}}';
-            const prompt = generateAnalyzePrompt('zh', null, null, {
+            const prompt = generateAnalyzePrompt('zh', null, null, 'ACADEMIC', {
                 customTemplate,
             });
             expect(prompt).toContain('自定义模板');

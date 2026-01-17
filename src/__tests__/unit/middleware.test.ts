@@ -15,7 +15,7 @@ vi.mock('@/lib/logger', () => ({
     })),
 }));
 
-import { middleware } from '@/middleware';
+import { middleware } from '../../../middleware';
 import { getToken } from 'next-auth/jwt';
 
 describe('middleware', () => {
@@ -178,7 +178,7 @@ describe('middleware', () => {
     describe('路径匹配', () => {
         it('中间件配置应该存在', async () => {
             // 验证中间件导出存在
-            const middlewareModule = await import('@/middleware');
+            const middlewareModule = await import('../../../middleware');
             expect(middlewareModule.config).toBeDefined();
             expect(middlewareModule.config.matcher).toBeDefined();
             expect(middlewareModule.config.matcher.length).toBeGreaterThan(0);

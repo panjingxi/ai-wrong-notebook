@@ -144,7 +144,7 @@ export class AzureOpenAIProvider implements AIService {
         const prefetchedBiologyTags = (subject === '生物' || !subject) ? await getTagsFromDB('biology') : [];
         const prefetchedEnglishTags = (subject === '英语' || !subject) ? await getTagsFromDB('english') : [];
 
-        const systemPrompt = generateAnalyzePrompt(language, grade, subject, {
+        const systemPrompt = generateAnalyzePrompt(language, grade, subject, 'ACADEMIC', {
             customTemplate: config.prompts?.analyze,
             prefetchedMathTags,
             prefetchedPhysicsTags,
@@ -213,6 +213,17 @@ export class AzureOpenAIProvider implements AIService {
                 stack: error instanceof Error ? error.stack : undefined
             });
             this.handleError(error);
+            throw error;
+        }
+    }
+
+    async batchAnalyzeImage(imageBase64: string, mimeType: string = "image/jpeg", language: 'zh' | 'en' = 'zh'): Promise<ParsedQuestion[]> {
+        logger.warn('batchAnalyzeImage is not fully implemented yet in Azure, returning single analysis result as array');
+        try {
+            const result = await this.analyzeImage(imageBase64, mimeType, language);
+            return [result];
+        } catch (error) {
+            logger.error({ error }, 'Error in batchAnalyzeImage fallback');
             throw error;
         }
     }

@@ -28,6 +28,10 @@ export default function AddErrorPage() {
     const { t, language } = useLanguage();
     const [notebook, setNotebook] = useState<Notebook | null>(null);
 
+    // Batch mode state
+    const [batchMode, setBatchMode] = useState(false);
+    const [paperName, setPaperName] = useState("");
+
     // Cropper state
     const [croppingImage, setCroppingImage] = useState<string | null>(null);
     const [isCropperOpen, setIsCropperOpen] = useState(false);
@@ -276,7 +280,14 @@ export default function AddErrorPage() {
 
                 {/* Main Content */}
                 {step === "upload" && (
-                    <UploadZone onImageSelect={onImageSelect} isAnalyzing={analysisStep !== 'idle'} />
+                    <UploadZone
+                        onImageSelect={onImageSelect}
+                        isAnalyzing={analysisStep !== 'idle'}
+                        batchMode={batchMode}
+                        onBatchModeChange={setBatchMode}
+                        paperName={paperName}
+                        onPaperNameChange={setPaperName}
+                    />
                 )}
 
                 {step === "review" && parsedData && currentImage && (

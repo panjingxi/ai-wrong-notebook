@@ -912,6 +912,10 @@ export const translations = {
             coachInsightsMessage: '基于您最近的"概念模糊"错误，AI 建议复习{topic}。',
             generatePractice: "生成练习集",
         },
+        mode: {
+            academic: "得分模式",
+            heritage: "人文模式",
+        },
         settings: {
             title: "设置",
             desc: "管理您的应用偏好和数据。",

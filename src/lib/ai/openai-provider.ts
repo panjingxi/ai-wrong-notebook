@@ -240,6 +240,17 @@ export class OpenAIProvider implements AIService {
         }
     }
 
+    async batchAnalyzeImage(imageBase64: string, mimeType: string = "image/jpeg", language: 'zh' | 'en' = 'zh'): Promise<ParsedQuestion[]> {
+        logger.warn('batchAnalyzeImage is not fully implemented yet, returning single analysis result as array');
+        try {
+            const result = await this.analyzeImage(imageBase64, mimeType, language);
+            return [result];
+        } catch (error) {
+            logger.error({ error }, 'Error in batchAnalyzeImage fallback');
+            throw error;
+        }
+    }
+
     async generateSimilarQuestion(originalQuestion: string, knowledgePoints: string[], language: 'zh' | 'en' = 'zh', difficulty: DifficultyLevel = 'medium'): Promise<ParsedQuestion> {
         const config = getAppConfig();
         const systemPrompt = generateSimilarQuestionPrompt(language, originalQuestion, knowledgePoints, difficulty, {
