@@ -1,0 +1,18 @@
+{
+  "/api/user/route": "app/api/user/route.js",
+  "/api/error-items/[id]/route": "app/api/error-items/[id]/route.js",
+  "/api/videos/search/route": "app/api/videos/search/route.js",
+  "/api/notebooks/[id]/route": "app/api/notebooks/[id]/route.js",
+  "/api/notebooks/route": "app/api/notebooks/route.js",
+  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
+  "/api/analytics/route": "app/api/analytics/route.js",
+  "/api/stats/practice/route": "app/api/stats/practice/route.js",
+  "/api/settings/route": "app/api/settings/route.js",
+  "/page": "app/page.js",
+  "/notebooks/[id]/page": "app/notebooks/[id]/page.js",
+  "/practice/page": "app/practice/page.js",
+  "/error-items/[id]/page": "app/error-items/[id]/page.js",
+  "/notebooks/page": "app/notebooks/page.js",
+  "/login/page": "app/login/page.js",
+  "/stats/page": "app/stats/page.js"
+}
