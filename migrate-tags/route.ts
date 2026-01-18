@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
@@ -24,6 +25,10 @@ interface TagAssociation {
     errorItemId: string;
     tagName: string;
     subject: string;
+}
+
+export async function GET() {
+    return NextResponse.json({ success: true, message: "Tag migration route is active. Use POST to trigger migration." });
 }
 
 export async function POST(req: Request) {

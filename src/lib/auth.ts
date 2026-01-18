@@ -121,10 +121,12 @@ export const authOptions: NextAuthOptions = {
     }
 }
 
-// Log startup check
-logger.info({
-    NODE_ENV: process.env.NODE_ENV,
-    NEXTAUTH_URL: process.env.NEXTAUTH_URL,
-    HAS_SECRET: !!process.env.NEXTAUTH_SECRET,
-    AUTH_TRUST_HOST: process.env.AUTH_TRUST_HOST
-}, 'AuthConfig loading');
+// Log startup check only in runtime, not during minimal build analysis if possible
+if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'test') {
+    logger.info({
+        NODE_ENV: process.env.NODE_ENV,
+        NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+        HAS_SECRET: !!process.env.NEXTAUTH_SECRET,
+        AUTH_TRUST_HOST: process.env.AUTH_TRUST_HOST
+    }, 'AuthConfig loading');
+}
